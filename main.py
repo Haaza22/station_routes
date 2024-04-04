@@ -1,11 +1,11 @@
-# Input:
+# General Input:
 # Start station and location (Example: Victoria outside station)
 # AND
 # Destination (Example: London Bridge)
 # AND (if applicable)
 # Accessibility level (can/cannot use stairs)
 #
-# Output:
+# General Output:
 # Underground route: (Example, northbound to X on Y (colour Z) change at W and so on)
 # Station pathing route: (at the branch go left through the ticket gate, also need )
 

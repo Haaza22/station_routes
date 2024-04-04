@@ -1,13 +1,5 @@
-# Input:
-# Start station and location (Example: Victoria outside station)
-# AND
-# Destination (Example: London Bridge)
-# AND (if applicable)
-# Accessibility level (can/cannot use stairs)
-#
-# Output:
-# Underground route: (Example, northbound to X on Y (colour Z) change at W and so on)
-# Station pathing route: (at the branch go left through the ticket gate, also need )
+# This is the page for class definitiaon and initialisation, as well as some function making
+# as well as dictionaries and arrays
 
 class Station:
     def __init__(self, given_name, given_name_full, given_locations, given_directions, given_num):
