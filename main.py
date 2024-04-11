@@ -3,7 +3,7 @@
 # AND
 # Destination (Example: London Bridge)
 # AND (if applicable)
-# Accessibility level (can/cannot use stairs)
+# Accessibility level (can/cannot use stairs, 1 for can, 0 for cannot)
 #
 # General Output:
 # Underground route: (Example, northbound to X on Y (colour Z) change at W and so on)
@@ -29,6 +29,9 @@ def overall_path(start, start_loc, end, access):
     station_path_route = []
     for i in range(0, len(changes)):
         cur_station = ST.station_num_to_object(changes[i][0])
+
+
+
         to_apnd = cur_station.station_pathing_routes(changes[i][1], changes[i][2], access)
         station_path_route.append(to_apnd)
 
@@ -127,7 +130,7 @@ def dijkstra_stations(start, end):
     station_route = [[start, 0, ST.plat_change_calc_depth(line_order[0][0], d)]]
     direction = -1
     bound = -1
-    changes_done=0
+    changes_done = 0
     for i in range(0, len(line_order)):
         total_stops = total_stops + line_order[i][1]
         # Start
@@ -150,7 +153,7 @@ def dijkstra_stations(start, end):
             old_line = line_order[i - 1][0]
             start_point, end_point = ST.plat_change_calc(line_order[i][0], direction, old_line, old_direction)
             station_route.append([changes[changes_done][0], start_point, end_point])
-            changes_done=changes_done+1
+            changes_done = changes_done + 1
         # Direction
         cur_msg = cur_msg + " " + direction
         # Bound
@@ -170,24 +173,22 @@ def dijkstra_stations(start, end):
     return presented, station_route
 
 
-# print(ST.BK.name_full)
-# print(ST.line_list["BK"].name_full)
-# Test for Vic to Kings cross
-# print()
-# for row in ST.station_matrix:
-#     print(row)
-# print()
-# for row in ST.lines_matrix:
-#     print(row)
+# underground_route, station_route_presented = overall_path("VIC", "OV_GR", "PAD", 1)
+# print(underground_route)
+# print(station_route_presented)
 # print()
 
-underground_route, station_route_presented = overall_path("VIC", "OV_GR", "KNG", 1)
+# Example routes:
+# Paddington to Victoria
+# Paddington to Kings cross
+# only using victoria line and bakerloo line
+underground_route, station_route_presented = overall_path("PAD", "OV_GR", "VIC", 1)
 print(underground_route)
 print(station_route_presented)
 
 print()
 
-underground_route_presented, station_route_presented = overall_path("VIC", "OV_GR", "PAD", 1)
+underground_route_presented, station_route_presented = overall_path("PAD", "OV_GR", "KNG", 1)
 print(underground_route_presented)
 print(station_route_presented)
 

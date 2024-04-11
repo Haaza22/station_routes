@@ -1,19 +1,35 @@
 # This is the page for class definitiaon and initialisation, as well as some function making
 # as well as dictionaries and arrays
+import csv
+
 
 class Station:
-    def __init__(self, given_name, given_name_full, given_locations, given_directions, given_num):
+    def __init__(self, given_name, given_name_full, given_locations, given_num):
         self.name = given_name
         self.name_full = given_name_full
         # Locations are arrays of 5 characters, 2 pairs of 2
         self.locations = given_locations
-        # Not sure how to store
-        self.directions = given_directions
         # Number is decided by this code, just for route finding
         self.num = given_num
+        self.directions = [[0 for _ in range(len(self.locations))] for _ in range(len(self.locations))]
+        self.directions_acc = [[0 for _ in range(len(self.locations))] for _ in range(len(self.locations))]
 
     def station_pathing_routes(self, start, end, access):
-        return self.directions[self.locations.index(start)][self.locations.index(end)]
+        if access == 0:
+            return self.directions_acc[self.locations.index(start)][self.locations.index(end)]
+        elif access == 1:
+            return self.directions[self.locations.index(start)][self.locations.index(end)]
+        else:
+            print("Invalid Access Given")
+
+    def location_arr(self, loc):
+        return self.locations.index(loc)
+
+    def dir_update(self, start, end, access, change):
+        if access == 0:
+            self.directions_acc[self.locations.index(start)][self.locations.index(end)] = change
+        elif access == 1:
+            self.directions[self.locations.index(start)][self.locations.index(end)] = change
 
 
 class Lines:
@@ -32,6 +48,14 @@ def station_num_to_name(num):
 
 def station_num_to_object(num):
     return station_list[station_array[num]]
+
+
+def station_name_to_num(name):
+    return station_list[name].num
+
+
+def station_name_to_object(name):
+    return station_list[name]
 
 
 def line_num_to_col(num):
@@ -83,18 +107,26 @@ def lines_dir_and_bound(stop1_g, stop2_g, line):
         print("Non existant line num (that or i havent coded it yet)")
 
 
-def calc_directions(staton_num,length):
-    # Aim of this is all the directions are in a txt file externally, and then are loaded in here
-    # For now im doing it lilke this. not great but heyyy
-    direction_arr = [[0 for _ in range(length)] for _ in range(length)]
-    if staton_num == 0: #if vic
-        #OV_GR to VI_NB
-        direction_arr[0][6] = "VIC OV_GR TO VI_NB"
-    elif staton_num == 2:# if Oxford crcus
-        direction_arr[5][1] = "OXF VI_NB TO BK_NB"
-        pass
+def calc_directions():
+    # Csv format:
+    # Station short hand, start location shorthand, end location short hand, access, description
+    with open('dir.csv', mode='r') as file:
+        csv_reader = csv.reader(file)
+        for item in csv_reader:
+            if len(item) != 1:
+                station = station_name_to_object(item[0])
+                start = item[1]
+                end = item[2]
+                access = int(item[3])
+                loaded_directions = item[4:]
 
-    return direction_arr
+                if access == 0:
+                    station.dir_update(start, end, access, loaded_directions)
+                elif access == 1:
+                    station.dir_update(start, end, access, loaded_directions)
+                else:
+                    print("invalid access")
+
 
 def make_station_mtx():
     rows, cols = (11, 11)
@@ -113,7 +145,7 @@ def make_station_mtx():
     st_ln[WAR.num][EUS.num] = VI.num
     st_ln[EUS.num][KNG.num] = VI.num
 
-    # Bakerloo
+    # Bakerloo line
     st_mx[OXF.num][REG.num] = 1
     st_mx[REG.num][BKS.num] = 1
     st_mx[BKS.num][MYL.num] = 1
@@ -125,7 +157,7 @@ def make_station_mtx():
     st_ln[MYL.num][EDR.num] = BK.num
     st_ln[EDR.num][PAD.num] = BK.num
 
-    # Reverse it:
+    # Reflect it:
     for row in range(0, len(st_mx)):
         for col in range(0, len(st_mx)):
             if st_mx[row][col] != 0:
@@ -155,23 +187,23 @@ VI = Lines("VI", "Victoria", "Light Blue", "NS", ["Brixton", "Walthamstone Centr
 line_list = {"BK": BK, "CE": CE, "CC": CC, "DI": DI, "HM": HM, "JU": JU, "MT": MT, "NO": NO, "PI": PI, "VI": VI}
 line_array = ["BK", "CE", "CC", "DI", "HM", "JU", "MT", "NO", "PI", "VI"]
 
-VIC = Station("VIC", "Victoria", ["OV_GR", "ST_SD", "CC_EB", "CC_WB", "DI_EB", "DI_WB", "VI_NB", "VI_SB"], [], 0)
-GRN = Station("GRN", "Green Park", ["ST_SD", "JU_NB", "JU_SB", "PI_EB", "PI_WB", "VI_NB", "VI_SB"], [], 1)
-OXF = Station("OXF", "Oxford Circus", ["ST_SD", "BK_NB", "BK_SB", "CE_EB", "CE_WB", "VI_NB", "VI_SB"], [], 2)
-WAR = Station("WAR", "Waren Street", ["ST_SD", "NO_NB", "NO_SB", "VI_NB", "VI_SB"], [], 3)
-EUS = Station("EUS", "Eusten", ["OV_GR", "ST_SD", "NO_NB", "NO_SB", "VI_NB", "VI_SB"], [], 4)
+VIC = Station("VIC", "Victoria", ["OV_GR", "ST_SD", "CC_EB", "CC_WB", "DI_EB", "DI_WB", "VI_NB", "VI_SB"], 0)
+GRN = Station("GRN", "Green Park", ["ST_SD", "JU_NB", "JU_SB", "PI_EB", "PI_WB", "VI_NB", "VI_SB"], 1)
+OXF = Station("OXF", "Oxford Circus", ["ST_SD", "BK_NB", "BK_SB", "CE_EB", "CE_WB", "VI_NB", "VI_SB"], 2)
+WAR = Station("WAR", "Waren Street", ["ST_SD", "NO_NB", "NO_SB", "VI_NB", "VI_SB"], 3)
+EUS = Station("EUS", "Eusten", ["OV_GR", "ST_SD", "NO_NB", "NO_SB", "VI_NB", "VI_SB"], 4)
 KNG = Station("KNG", "Kings Cross St Pancras",
               ["OV_GR", "ST_SD", "CC_EB", "CC_WB", "HM_EB", "HM_WB", "MT_EB", "MT_WB", "NO_NB", "NO_SB", "PI_EB",
-               "PI_WB", "VI_NB", "VI_SB"], [], 5)
+               "PI_WB", "VI_NB", "VI_SB"], 5)
 
-REG = Station("REG", "Regent Park", ["ST_SD", "BK_NB", "BK_SB"], [], 6)
+REG = Station("REG", "Regent Park", ["ST_SD", "BK_NB", "BK_SB"], 6)
 BKS = Station("BKS", "Bakers Street",
-              ["ST_SD", "BK_NB", "BK_SB", "CC_EB", "CC_WB", "HM_EB", "HM_WB", "JU_NB", "JU_SB", "MT_EB", "MT_WB"], [],
+              ["ST_SD", "BK_NB", "BK_SB", "CC_EB", "CC_WB", "HM_EB", "HM_WB", "JU_NB", "JU_SB", "MT_EB", "MT_WB"],
               7)
-MYL = Station("MYL", "Marylbone", ["OV_GR", "ST_SD", "BK_NB", "BK_SB"], [], 8)
-EDR = Station("EDR", "Edgeware Road", ["ST_SD", "BK_NB", "BK_SB"], [], 9)
+MYL = Station("MYL", "Marylbone", ["OV_GR", "ST_SD", "BK_NB", "BK_SB"], 8)
+EDR = Station("EDR", "Edgeware Road", ["ST_SD", "BK_NB", "BK_SB"], 9)
 PAD = Station("PAD", "Paddington",
-              ["OV_GR", "ST_SD", "BK_NB", "BK_SB", "CC_EB", "CC_WB", "DI_EB", "DI_WB", "HM_EB", "HM_WB"], [], 10)
+              ["OV_GR", "ST_SD", "BK_NB", "BK_SB", "CC_EB", "CC_WB", "DI_EB", "DI_WB", "HM_EB", "HM_WB"], 10)
 
 station_list = {"VIC": VIC, "GRN": GRN, "OXF": OXF, "WAR": WAR, "EUS": EUS, "KNG": KNG, "REG": REG, "BKS": BKS,
                 "MYL": MYL, "EDR": EDR, "PAD": PAD}
@@ -182,8 +214,6 @@ VI_list = ["VIC", "GRN", "OXF", "WAR", "EUS", "KNG"]
 # If greater then North
 BK_list = ["OXF", "REG", "BKS", "MYL", "EDR", "PAD"]
 
-# 0 is victorias number
-VIC.directions = calc_directions(0, len(VIC.locations))
-OXF.directions = calc_directions(2, len(OXF.locations))
+calc_directions()
 
 station_matrix, lines_matrix = make_station_mtx()

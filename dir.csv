@@ -1,0 +1,14 @@
+VIC,OV_GR,VI_NB,0,VIC OV_GR to VI_NB access 0
+VIC,OV_GR,VI_NB,1,VIC OV_GR to VI_NB access 1
+BREAK
+OXF,VI_NB,BK_NB,0,OXF VI_NB to BK_NB access 0
+OXF,VI_NB,BK_NB,1,OXF VI_NB to BK_NB access 1
+OXF,BK_SB,VI_NB,0,OXF BK_SB to VI_NB access 0
+OXF,BK_SB,VI_NB,1,OXF BK_SB to VI_NB access 1, As you exit the train take one of the tunnels on the edges rather than the middle of the platform, from there turn to right/left whichever direction would lead you further from the centre of the platform, Then follow the small U shaped path until you reach the victoria northbound platform
+OXF,BK_SB,VI_SB,0,OXF BK_SB to VI_SB access 0
+OXF,BK_SB,VI_SB,1,OXF BK_SB to VI_SB access 1, As you exit the train take one of the tunnels that goes strait accross, this leads directally to victoria southbound
+BREAK
+PAD,OV_GR,BK_SB,0,PAD OV_GR to BK_SB access 0:
+PAD,OV_GR,BK_SB,1,PAD OV_GR to BK_SB access 1, From the main hub take the wide underground starts opposite the overground ticket gates, Then continue along the long path until you turn off to the left, then the southbound platform will be on the right
+PAD,OV_GR,BK_NB,0,PAD OV_GR to BK_NB access 0:
+PAD,OV_GR,BK_NB,1,PAD OV_GR to BK_NB access 1:
